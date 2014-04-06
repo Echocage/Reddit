@@ -27,10 +27,15 @@ while True:
             if not already_done.__contains__(submission):
                 if re.search('(give(ing)? ?away)', submission.title.lower()) != None:
                     if not alreadyReminded(submission.comments):
+                        currentMessage = ""
                         if submission.comments.__len__() == 0:
-                            submission.add_comment("First! :D")
+                            currentMessage +="First! :D"
                         else:
-                            submission.add_comment(random.choice(messages))
+                            currentMessage+= random.choice(messages)
+                        if re.match('number',submission.selftext) != None:
+                            currentMessage+= ' 12'
+                        submission.add_comment(currentMessage)
+                        print currentMessage , submission
                         time.sleep(2)
                     already_done.append(submission)
         time.sleep(5)
