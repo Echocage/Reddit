@@ -2,11 +2,12 @@ import random
 import praw
 import time
 import re
-import Login
+from Login import Login
 
 r = praw.Reddit('Respond to giveaways in /r/dogecoin'
-                'by /u/echocage')
-r.login(username = 'MrSause',password = Login.Login('MrSause'))
+                'by /u/echocage for /u/quantumcinematic')
+username = 'Example Username'
+r.login(username = username,password = Login(username))
 
 already_done = []
 
@@ -14,31 +15,31 @@ messages = ["Thanks!", "Thanks so much!", "Thanks for doing this", "That's reall
 
 def alreadyReminded(list):
         for i in list:
-            if i.author.__str__().__eq__('MrSause'):
+            if i.author.__str__().__eq__(username):
                 return True
         return False
 
 
 while True:
     try:
+
         subreddit = r.get_subreddit('dogecoin')
         posts = subreddit.get_new()
         for submission in posts:
             if not already_done.__contains__(submission):
                 if re.search('(give(ing)? ?away)', submission.title.lower()) != None:
                     if not alreadyReminded(submission.comments):
-                        currentMessage = ""
-                        if submission.comments.__len__() == 0:
-                            currentMessage +="First! :D"
-                        else:
-                            currentMessage+= random.choice(messages)
+                        currentMessage= random.choice(messages)
                         if re.match('number',submission.selftext) != None:
-                            currentMessage+= ' 12'
+                            currentMessage+= '... errr... 12'
                         submission.add_comment(currentMessage)
                         print currentMessage , submission
                         time.sleep(2)
                     already_done.append(submission)
         time.sleep(5)
+
+
+
     except praw.errors.RateLimitExceeded,ex:
         try:
             start = ex.message[ex.message.index(' in ')+4:]
