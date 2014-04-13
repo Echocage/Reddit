@@ -47,16 +47,7 @@ def isShadowbanned(user):
     except:
         return True
 
-def alreadyReminded(list):
-        for i in list:
-            if i.author.__str__().__eq__('BuildAPC4MeBot'):
-                return True
-        return False
 
-userList = ["ShadowBanCheckBot","BuildAPC4MeBot","IAmaAnswerListingBot", "Echocage"]
-for i in userList:
-    if isShadowbanned(i):
-        print i +" is shadowbanned"
 while True:
     try:
         subreddit = r.get_subreddit('ShadowBan')
