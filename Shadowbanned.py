@@ -1,11 +1,11 @@
 import time
 import re
 import praw
-from Login import *
+from Login import Login
 r = praw.Reddit('Respond to users on r/shadowbanned'
                 'by /u/echocage')
 username = 'ShadowBanCheckBot'
-r.login(username = username,password = Login(username))
+r.login(username = username,password= Login(username))
 r.is_logged_in()
 already_done = []
 bannedMessage = """ You're shadowbanned.
@@ -69,8 +69,7 @@ while True:
                         submission.add_comment(notBannedMessage)
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
                 already_done.append(submission)
-
-        time.sleep(20)
+        time.sleep(5)
     except praw.errors.RateLimitExceeded,ex:
         try:
             start = ex.message[ex.message.index(' in ')+4:]
