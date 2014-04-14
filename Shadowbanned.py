@@ -76,5 +76,8 @@ while True:
             time.sleep(600+.05)
         except:
          None
+    except Exception as es:
+        print es
+
 
 
