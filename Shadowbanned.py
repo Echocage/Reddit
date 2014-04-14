@@ -49,8 +49,8 @@ def isShadowbanned(user):
 
 subreddit = r.get_subreddit('ShadowBan')
 while True:
-    posts = subreddit.get_new()
     try:
+        posts = subreddit.get_new()
         for submission in posts:
                 if not already_done.__contains__(submission) and submission.comments.__len__() == 0 and re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) is not None:
                     if isShadowbanned(submission.author):
