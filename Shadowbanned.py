@@ -52,13 +52,13 @@ while True:
     posts = subreddit.get_new()
     try:
         for submission in posts:
-                if submission.comments.__len__() == 0 and not re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) == None:
+                if not already_done.__contains__(submission) and submission.comments.__len__() == 0 and re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) is not None:
                     if isShadowbanned(submission.author):
                         submission.add_comment(bannedMessage)
                     else:
                         submission.add_comment(notBannedMessage)
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
-                already_done.append(submission)
+                    already_done.append(submission)
         time.sleep(5)
     except praw.errors.RateLimitExceeded,ex:
         try:
