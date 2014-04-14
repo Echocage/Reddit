@@ -47,9 +47,10 @@ def isShadowbanned(user):
     except:
         return True
 
-def check():
-     try:
-        posts = subreddit.get_new()
+subreddit = r.get_subreddit('ShadowBan')
+while True:
+    posts = subreddit.get_new()
+    try:
         for submission in posts:
                 if submission.comments.__len__() == 0 and not re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) == None:
                     if isShadowbanned(submission.author):
@@ -59,7 +60,7 @@ def check():
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
                 already_done.append(submission)
         time.sleep(5)
-     except praw.errors.RateLimitExceeded,ex:
+    except praw.errors.RateLimitExceeded,ex:
         try:
             start = ex.message[ex.message.index(' in ')+4:]
             length = start[:start.index(' ')]
@@ -73,10 +74,7 @@ def check():
         except Exception, ex:
             print "Limited, trying again in 10 minutes"
             time.sleep(600+.05)
-     except:
-        None
-subreddit = r.get_subreddit('ShadowBan')
-while True:
-   check()
+        except:
+         None
 
 
