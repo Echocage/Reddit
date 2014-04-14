@@ -47,19 +47,8 @@ def isShadowbanned(user):
     except:
         return True
 
-def alreadyReminded(list):
-        for i in list:
-            if i.author.__str__().__eq__('BuildAPC4MeBot'):
-                return True
-        return False
-
-userList = ["ShadowBanCheckBot","BuildAPC4MeBot","IAmaAnswerListingBot", "Echocage"]
-for i in userList:
-    if isShadowbanned(i):
-        print i +" is shadowbanned"
-while True:
-    try:
-        subreddit = r.get_subreddit('ShadowBan')
+def check():
+     try:
         posts = subreddit.get_new()
         for submission in posts:
                 if submission.comments.__len__() == 0 and not re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) == None:
@@ -70,7 +59,7 @@ while True:
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
                 already_done.append(submission)
         time.sleep(5)
-    except praw.errors.RateLimitExceeded,ex:
+     except praw.errors.RateLimitExceeded,ex:
         try:
             start = ex.message[ex.message.index(' in ')+4:]
             length = start[:start.index(' ')]
@@ -84,7 +73,10 @@ while True:
         except Exception, ex:
             print "Limited, trying again in 10 minutes"
             time.sleep(600+.05)
-    except:
+     except:
         None
+subreddit = r.get_subreddit('ShadowBan')
+while True:
+   check()
 
 
