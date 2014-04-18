@@ -1,5 +1,6 @@
 import time
 import re
+import traceback
 import praw
 from Login import Login
 r = praw.Reddit('Respond to users on r/shadowbanned'
@@ -52,7 +53,10 @@ while True:
     try:
         posts = subreddit.get_new()
         for submission in posts:
-                if not already_done.__contains__(submission) and submission.comments.__len__() == 0 and re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) is not None:
+                if not already_done.__contains__(submission) \
+                   and submission.comments.__len__() == 0 \
+                   and re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) is not None:
+
                     if isShadowbanned(submission.author):
                         submission.add_comment(bannedMessage)
                     else:
@@ -61,10 +65,10 @@ while True:
                     already_done.append(submission)
         time.sleep(5)
     except praw.errors.RateLimitExceeded,ex:
+        print 'RateLimted..'
         try:
             start = ex.message[ex.message.index(' in ')+4:]
             length = start[:start.index(' ')]
-
             if (ex.message.find('minute') != -1):
                 print "Limited, trying again in "+length+" minutes"
                 time.sleep(int(length)*60+.05)
@@ -74,10 +78,8 @@ while True:
         except Exception, ex:
             print "Limited, trying again in 10 minutes"
             time.sleep(600+.05)
-        except:
-         None
-    except Exception as es:
-        print es
+    except:
+        print traceback.format_exc()
 
 
 
