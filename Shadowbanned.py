@@ -2,6 +2,7 @@ import time
 import re
 import traceback
 import praw
+import sys
 from Login import Login
 r = praw.Reddit('Respond to users on r/shadowbanned'
                 'by /u/echocage')
@@ -64,20 +65,9 @@ while True:
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
                     already_done.append(submission)
         time.sleep(5)
-    except praw.errors.RateLimitExceeded,ex:
-        print 'RateLimted..'
-        try:
-            start = ex.message[ex.message.index(' in ')+4:]
-            length = start[:start.index(' ')]
-            if (ex.message.find('minute') != -1):
-                print "Limited, trying again in "+length+" minutes"
-                time.sleep(int(length)*60+.05)
-            else:
-                print "Limited, trying again in "+length+" seconds"
-                time.sleep(int(length)+1)
-        except Exception, ex:
-            print "Limited, trying again in 10 minutes"
-            time.sleep(600+.05)
+    except praw.errors.RateLimitExc as err:
+        print "Rate Limit Exceeded:\n" + str(err), sys.stderr
+        time.sleep(err.sleep_time0+.05)
     except:
         print traceback.format_exc()
 

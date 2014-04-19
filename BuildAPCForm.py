@@ -1,6 +1,7 @@
 import time
 import traceback
 import praw
+import sys
 from Login import Login
 r = praw.Reddit('Reminds users to use form for submissions on r/buildapcforme '
                 'by /u/echocage')
@@ -18,13 +19,13 @@ messageBuildReview ="""Looks like you forgot to fill out the form in the sidebar
 **Depending on your answers to the questions, the build you posted might be great or horrible for you. It might be totally not what you need and you might be wasting money in an area that you aren't going to need.**
 ---------------------------
 *I am a bot.* """
-
-
+subreddit = r.get_subreddit('buildapcforme')
 
 while True:
     try:
-        subreddit = r.get_subreddit('buildapcforme')
+
         posts = subreddit.get_new()
+
         for submission in posts:
             if not submission in already_done \
                and not 'What will you be doing with this PC?' in submission.selftext  \
@@ -42,19 +43,9 @@ while True:
                         time.sleep(5)
                     already_done.append(submission)
         time.sleep(20)
-    except praw.errors.RateLimitExceeded,ex:
-        try:
-            start = ex.message[ex.message.index(' in ')+4:]
-            length = start[:start.index(' ')]
-            if (ex.message.find('minute') != -1):
-                print "Limited, trying again in "+length+" minutes"
-                time.sleep(int(length)*60+.05)
-            else:
-                print "Limited, trying again in "+length+" seconds"
-                time.sleep(int(length)+1)
-        except Exception, ex:
-            print traceback.format_exc()
-            time.sleep(600+.05)
+    except praw.errors.RateLimitExc as err:
+        print "Rate Limit Exceeded:\n" + str(err), sys.stderr
+        time.sleep(err.sleep_time0+.05)
     except:
         print traceback.format_exc()
 
