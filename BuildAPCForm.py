@@ -43,7 +43,7 @@ while True:
                         time.sleep(5)
                     already_done.append(submission)
         time.sleep(20)
-    except praw.errors.RateLimitExc as err:
+    except praw.errors.RateLimitExceeded as err:
         print "Rate Limit Exceeded:\n" + str(err), sys.stderr
         time.sleep(err.sleep_time0+.05)
     except:
