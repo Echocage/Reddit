@@ -3,6 +3,7 @@ import re
 import traceback
 import praw
 import sys
+from requests.packages.urllib3.exceptions import HTTPError
 from Login import Login
 r = praw.Reddit('Respond to users on r/shadowbanned'
                 'by /u/echocage')
@@ -50,24 +51,28 @@ def isShadowbanned(user):
         return True
 
 subreddit = r.get_subreddit('ShadowBan')
+posts = subreddit.get_new()
 while True:
     try:
         posts = subreddit.get_new()
         for submission in posts:
-                if not already_done.__contains__(submission) \
-                   and submission.comments.__len__() == 0 \
+                if not submission in already_done\
+                   and not len(submission.comments) \
                    and re.search('((i am)|(am) (i)|(shadow) ?(ban(ned)?)\?)|(test)', submission.title.lower()) is not None:
-
                     if isShadowbanned(submission.author):
                         submission.add_comment(bannedMessage)
+                        submission.set_flair('TRUE','true')
                     else:
                         submission.add_comment(notBannedMessage)
+                        submission.set_flair('FALSE','false')
                     print "[Shadowbanned: "+ isShadowbanned(submission.author).__str__()+ "]", submission.title
                     already_done.append(submission)
         time.sleep(5)
     except praw.errors.RateLimitExceeded as err:
         print "Rate Limit Exceeded:\n" + str(err), sys.stderr
         time.sleep(err.sleep_time0+.05)
+    except HTTPError:
+        print 'Http Error...'
     except:
         print traceback.format_exc()
 
